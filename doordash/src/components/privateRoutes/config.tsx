@@ -1,6 +1,7 @@
 import Home from "../home/Home";
-import JobWardrobe from "../job-wardrobe/JobWardrobe"
+import Repository from "../repository/Repository"
 import Login from "../login/Login";
+import Register from "../register/Register";
 
 export const CustomRouteConfigs = [
     {
@@ -8,48 +9,48 @@ export const CustomRouteConfigs = [
         path: "/",
         component: Home,
         description: "",
-        auth: true
+        header: true
     },
     {
         name: "Repository",
         path: "/repository",
-        component: JobWardrobe,
+        component: Repository,
         description: "",
-        auth: true
+        header: true
     },
     {
         name: "Log In",
         path: "/login",
         component: Login,
         description: "",
-        auth: false
+        header: false
     },
     {
         name: "Create Account",
         path: "/register",
-        component: JobWardrobe,
+        component: Register,
         description: "",
-        auth: false
+        header: false
     },
     {
         name: "Delete Account",
         path: "/deregister",
-        component: JobWardrobe,
+        component: Repository,
         description: "",
-        auth: true
+        header: true
     },
     {
         name: "Log Out",
         path: "/logout",
-        component: JobWardrobe,
+        component: Repository,
         description: "",
-        auth: true
+        header: true
     },
     {
         name: "PDF to Image",
         path: "/pdf-to-image",
-        component: JobWardrobe,
+        component: Repository,
         description: "",
-        auth: true
+        header: true
     }
 ];

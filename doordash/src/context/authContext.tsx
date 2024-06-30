@@ -1,11 +1,19 @@
-import { createContext, Dispatch, SetStateAction } from 'react';
+import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 
 interface AuthContextType {
     isAuth: boolean;
     setIsAuth: Dispatch<SetStateAction<boolean>>;
+    SignOut: any;
+    Authenticate: any;
 }
 
-export const AuthContext = createContext<AuthContextType>({
+export const OriginalAuthContext = createContext<AuthContextType>({
     isAuth: false,
     setIsAuth: () => {},
-  });
+    SignOut: () => {},
+    Authenticate: () => {}
+})
+
+const AuthContext = () => useContext(OriginalAuthContext);
+
+export default AuthContext;

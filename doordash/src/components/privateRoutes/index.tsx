@@ -1,18 +1,19 @@
 import { CustomRouteConfigs } from './config'
 import { observer } from 'mobx-react'
-import React, { FC, Suspense } from 'react'
+import React, { Dispatch, FC, SetStateAction, Suspense, useContext, useEffect } from 'react'
 import { Route, Routes  } from 'react-router-dom'
-import Body from '../job-wardrobe/JobWardrobe'
+import Home from "../home/Home";
 import Header from '../header/Header'
 
 const CustomRoutes: FC = observer(() => {
-    const Home = CustomRouteConfigs[0].component
+
+    console.log('Rendering PrivateRoutes');
     return (
-       <Suspense fallback={<Body />}>
+       <Suspense fallback={<Home />}>
            <Routes>
-                {CustomRouteConfigs.map((route: { component: any; path: string; auth: boolean; }, index: any) => {
+                {CustomRouteConfigs.map((route: { component: any; path: string; header: boolean; }, index: any) => {
                    const Component = route.component;
-                   const WrappedComponent = route.auth ? (
+                   const WrappedComponent = route.header ? (
                         <>
                             <Header />
                             <Component />

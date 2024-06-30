@@ -14,47 +14,42 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/authContext';
+import AuthContext from '../../context/AuthContext';
 
-const navigation = [
-  { name: 'Home', href: '/' },
+const MenuList = [
   { name: 'Repository', href: '/repository' },
   { name: 'Utilities', href: '#' },
   { name: 'Calendar', href: '#' },
 ]
 
-function SignOut(setIsAuth: ((arg0: boolean) => void)) {
-  
-  const backendUrl = new URL(process.env.REACT_APP_TOWLSCHII_UTILITIES_INGRESS + "user/logout");
-  fetch(backendUrl, {
-    method: 'POST',
-    credentials: 'include'
-  }).then((response) => response.json())
-  .then((data) => {
-    console.log(data);
-  }).catch((err) => {
-    console.log(err);
-  });
-
-  setIsAuth(false);
-}
 
 function ShowAuthenticated() {
 
-  const navigate = useNavigate();
-  const {isAuth, setIsAuth} = useContext(AuthContext);
+  const {isAuth, SignOut, Authenticate} = AuthContext();
   const [base64Image, setBase64Image] = useState(``);
+  console.log('Rendering Header with auth:', isAuth);
+
+  const ProfileMenuList = [
+    { name: 'Your Profile', onClick: SignOut },
+    { name: 'Settings', onClick: SignOut },
+    { name: 'Sign Out', onClick: SignOut }
+  ]
 
   useEffect(() => {
+    
+    Authenticate();
+    console.log('Authenticated from Header:', isAuth);
+
     const image = localStorage.getItem('profileImage');
     if (image) {
       setBase64Image(`data:image/jpeg;base64,${image}`);
     } else {
       setBase64Image(defaultProfilePicture);
     }
-  }, []);
 
-  return isAuth 
+  }, [isAuth]);
+
+  return isAuth
   ? (
     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
       <button
@@ -88,50 +83,30 @@ function ShowAuthenticated() {
           leaveTo="transform opacity-0 scale-95"
         >
           <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <MenuItem>
-              {({ focus }) => (
-                <a
-                  href="#"
-                  className={classNames(focus ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                >
-                  Your Profile
-                </a>
-              )}
-            </MenuItem>
-            <MenuItem>
-              {({ focus }) => (
-                <a
-                  href="#"
-                  className={classNames(focus ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                >
-                  Settings
-                </a>
-              )}
-            </MenuItem>
-            <MenuItem>
-              {({ focus }) => (
-                <a
-                  onClick={() => SignOut(setIsAuth)}
-                  className={classNames(focus ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-                >
-                  Sign out
-                </a>
-              )}
-            </MenuItem>
+            {ProfileMenuList.map((item, index) => (
+              <MenuItem key={item.name}>
+                {({ focus }) => (
+                  <p
+                    onClick={() => item.onClick()}
+                    className={classNames(focus ? 'bg-rose-500 text-white' : '', 'cursor-pointer block px-4 py-2 text-sm text-gray-700')}
+                  >
+                    {item.name}
+                  </p>
+                )}
+              </MenuItem>
+            ))}
           </MenuItems>
         </Transition>
       </Menu>
     </div>
   )
   : (
-    <button
-      onClick={() => {
-        navigate('/login');
-      }}
-      className="transition px-4 py-1.5 bg-white text-gray-900 font-semibold rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-      >
+    <a
+    href='/login'
+    className="rounded-md transition bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+    >
       Log In
-    </button>
+    </a>
   );
 
 }
@@ -159,16 +134,16 @@ export default function Header() {
                 </DisclosureButton>
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex flex-shrink-0 items-center">
+                <a href='/' className="hidden sm:flex flex-shrink-0 items-center">
                   <img
-                    className="h-10 w-auto rounded-full"
+                    className="h-10 w-auto rounded-full hover:rotate-90 hover: transition"
                     src={towlschiiLogo}
                     alt="Your Company"
                   />
-                </div>
+                </a>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    {navigation.map((item, index) => (
+                    {MenuList.map((item, index) => (
                       <a
                         key={item.name}
                         href={item.href}
@@ -195,7 +170,7 @@ export default function Header() {
 
           <DisclosurePanel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
-              {navigation.map((item, index) => (
+              {MenuList.map((item, index) => (
                 <DisclosureButton
                   key={item.name}
                   as="a"
@@ -205,7 +180,7 @@ export default function Header() {
                   }
                   className={classNames(
                     selectedMenu === index ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'block rounded-md px-3 py-2 text-base font-medium'
+                    'block rounded-md px-3 py-2 text-base font-medium transition'
                   )}
                   aria-current={selectedMenu === index ? 'page' : undefined}
                 >
