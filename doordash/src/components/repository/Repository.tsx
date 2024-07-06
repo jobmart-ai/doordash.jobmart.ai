@@ -1,9 +1,9 @@
 import classNames from "classnames";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import jobIcon from '../../assets/job-icon.png'
 import OfficeHqIcon from '../../assets/office-hq-icon.jpg'
+import { BriefcaseIcon } from '@heroicons/react/24/solid';
 import AddCompany from "../modal/AddCompany";
 
 
@@ -52,11 +52,9 @@ export default function Repository() {
   const [addCompany, setAddCompany] = useState(false);
   console.log('Rendering Repository with auth:', isAuth);
 
-  const backendUrl = new URL(process.env.REACT_APP_TOWLSCHII_UTILITIES_INGRESS + "companies");
-
-  useEffect(() => {
+  function FetchComapnies() {
     
-    Authenticate();
+    const backendUrl = new URL(process.env.REACT_APP_TOWLSCHII_UTILITIES_INGRESS + "companies");
     fetch(backendUrl, {
       method: 'GET',
       credentials: 'include'
@@ -77,9 +75,18 @@ export default function Repository() {
     })
     .catch((err) => {
       console.log(err);
-  });
+    });
+  }
 
+  useEffect(() => {
+    Authenticate();
+    FetchComapnies();
   }, [isAuth]);
+
+  useEffect(() => {
+    if(addCompany === false)
+      FetchComapnies();
+  }, [addCompany]);
 
   return (
     <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -92,7 +99,7 @@ export default function Repository() {
         <li 
         key={company.email} 
         className={classNames('flex justify-between gap-x-6 py-5',
-          selectedCompany === index ? 'bg-slate-400' : ' hover:bg-slate-200',
+          selectedCompany === index ? 'bg-slate-400' : ' hover:bg-rose-200',
           'rounded-md px-3 py-2 text-sm font-medium'
         )}
         onClick={
@@ -100,11 +107,7 @@ export default function Repository() {
         }
         >
           <div className="flex min-w-0 gap-x-4">
-            <img 
-              className="h-12 w-12 flex-none rounded-full bg-gray-50" 
-              src={company.imageUrl || jobIcon} 
-              alt="" 
-              />
+            <BriefcaseIcon className="flex-none bg-rose-500 rounded-full h-12 w-12 p-2 text-white" aria-hidden="true" />
             <div className="min-w-0 flex-auto">
               <p className="text-lg font-semibold leading-6 text-gray-900">{company.name}</p>
               <p 
